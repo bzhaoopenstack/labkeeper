@@ -1,0 +1,86 @@
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+---
+- name: Install hub both in nodepool and zuul
+  hosts: nodepool:zuul
+  become: yes
+  tasks:
+    - name: Install hub
+      shell:
+        cmd: |
+          ## check hub installed or not
+          if hub version >> /dev/null;then
+              echo "hub has been installed!"
+          else
+              echo "hub installing..."
+              wget https://github.com/github/hub/releases/download/v2.10.0/hub-linux-amd64-2.10.0.tgz
+              sudo tar -C /usr/local/src -xzf hub-linux-amd64-2.10.0.tgz
+              cd /usr/local/src/hub-linux-amd64-2.10.0
+              sudo ./install
+              hub version
+              echo "hub installed success!"
+          fi
+        executable: /bin/bash
+
+- name: Cron task of sync config files for nodepool
+  hosts: nodepool
+  become: yes
+  vars_files:
+    - "{{ labkeeper_src_dir }}/inventory/group_vars/all.yaml"
+  tasks:
+    - name: Install shyaml,ansible and ruamel.yaml
+      pip:
+        name: ['shyaml', 'ruamel.yaml', 'ansible']
+
+    - name: Copy nodepool_files_sync.sh into place.
+      copy:
+        dest: /home/ubuntu/nodepool_files_sync.sh
+        src: "{{ labkeeper_src_dir }}/labsync/nodepool_files_sync.sh"
+
+    - name: Copy modify_files.py into place.
+      copy:
+        dest: /home/ubuntu/modify_files.py
+        src: "{{ labkeeper_src_dir }}/labsync/modify_files.py"
+
+    - name: Copy vault-password into place.
+      copy:
+        dest: /home/ubuntu/vault-password.txt
+        src: "{{ labkeeper_src_dir }}/vault-password.txt"
+
+    - name: Add cron task to sync files for nodepool
+      shell:
+        cmd: |
+          # add cron to create pr to github at utc 1:00 every day
+          touch nodepool_sync.cron
+          echo "* 1 * * * bash /home/ubuntu/nodepool_files_sync.sh {{ github_username }} {{ github_useremail }} {{ github_password }} >> /var/log/sync.log 2>&1" > nodepool_sync.cron
+          crontab nodepool_sync.cron
+        executable: /bin/bash
+
+- name: Cron task of sync config files for zuul
+  become: yes
+  hosts: zuul
+  vars_files:
+    - "{{ labkeeper_src_dir }}/inventory/group_vars/all.yaml"
+  tasks:
+    - name: Copy zuul_files_sync.sh into place.
+      copy:
+        dest: /home/ubuntu/zuul_files_sync.sh
+        src: "{{ labkeeper_src_dir }}/labsync/zuul_files_sync.sh"
+
+    - name: Add cron task to sync files for zuul
+      shell:
+        cmd: |
+          # add cron to create pr to github at utc 00:00 every day
+          touch zuul_sync.cron
+          echo "* 0 * * * bash /home/ubuntu/zuul_files_sync.sh {{ github_username }} {{ github_useremail }} {{ github_password }} >> /var/log/sync.log 2>&1" > zuul_sync.cron
+          crontab zuul_sync.cron
+        executable: /bin/bash
