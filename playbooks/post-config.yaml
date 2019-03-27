@@ -43,3 +43,7 @@
         - zuul-merger
         - zuul-fingergw
         - zuul-web
+
+- name: Create Labsync task
+  import_playbook: sync-config-files.yaml
+  when: labsync_enabled

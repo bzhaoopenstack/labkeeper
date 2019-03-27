@@ -35,6 +35,7 @@ all:
       vars:
         nodepool_file_nodepool_yaml_src: "{{ labkeeper_config_git_dest }}/nodepool/allinone-nodepool.yaml.j2"
         nodepool_clouds_src: "{{ labkeeper_config_git_dest }}/nodepool/openlab-clouds.yaml.j2"
+        labsync_enabled: true
     zuul:
       children:
         zuul-scheduler:
@@ -110,6 +111,7 @@ all:
         zuul_tenant_name: openlaballinone
         openlab_zuul_jobs_key_src: "{{ labkeeper_config_git_dest }}/zuul/allinone-openlab-zuul-jobs.pem"
         openlab_zuul_jobs_key_dest: "/var/lib/zuul/keys/secrets/project/github/liu-sheng/openlab-zuul-jobs/0.pem"
+        labsync_enabled: true
     gear:
       children:
         gear-master:
