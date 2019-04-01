@@ -14,22 +14,20 @@ zookeeper-servers:
 
 labels:
   - name: ubuntu-xenial
-    min-ready: 0
-  - name: ubuntu-xenial-gpu
-    min-ready: 0
+    min-ready: 1
   - name: ubuntu-trusty
     min-ready: 0
+  - name: ubuntu-xenial-arm64
+    min-ready: 1 
+  - name: centos-arm64
 
 providers:
-  #CityNetwork
-  # limits: 50 vms, 100 Cores, 256000 M Ram
-  - name: citynetworkallinone
-    cloud: citynetwork
+  - name: otcallinone
+    cloud: otc
     driver: openstack
-    image-name-format: 'openlaballinone-{image_name}-{timestamp}'
-    launch-timeout: 900
-    boot-timeout: 600
-    max-concurrency: 5
+    launch-timeout: 1200
+    boot-timeout: 1200
+    image-name-format: 'allinone-openlab-{image_name}-{timestamp}'
     diskimages:
       - name: ubuntu-xenial
         config-drive: true
@@ -37,20 +35,67 @@ providers:
         config-drive: true
     pools:
       - name: ubuntu-xenial
-        max-cores: 12
+        auto-floating-ip: False
+        max-servers: 12
         networks:
-          - openlab-net
+          - openlab-env
         labels:
           - name: ubuntu-xenial
             diskimage: ubuntu-xenial
-            flavor-name: '4C-8GB-100GB'
+            # flavor-name: 'c2.4xlarge'
+            flavor-name: 's2.2xlarge.1'
+            boot-from-volume: True
+            volume-size: 100
+      - name: ubuntu-trusty
+        auto-floating-ip: False
+        max-servers: 2
+        networks:
+          - openlab-env
+        labels:
           - name: ubuntu-trusty
             diskimage: ubuntu-trusty
-            flavor-name: '4C-8GB-100GB'
+            # flavor-name: 'c2.4xlarge'
+            flavor-name: 's2.2xlarge.1'
+            boot-from-volume: True
+            volume-size: 100
+
+  - name: vexxhost-openlaballinone
+    cloud: vexxhost
+    driver: openstack
+    launch-timeout: 900
+    boot-timeout: 600
+    max-concurrency: 10
+    cloud-images:
+      - name: ubuntu-xenial-arm64
+        # this image-name is the uuid of arm image
+        image-name: '73ab0f82-f2a0-47bb-902a-5f1236ad7c2a'
+    pools:
+      - name: ubuntu-xenial-allinone
+        max-ram: 163840
+        networks:
+          - int-net
+        labels:
+          - name: ubuntu-xenial-arm64
+            cloud-image: ubuntu-xenial-arm64
+            flavor-name: 'v2-highcpu-8'
+
+  - name: huaweicloud-arm-static
+    driver: static
+    pools:
+      - name: main
+        nodes:
+        - name: 114.115.172.84
+          labels: centos-arm64
+          timeout: 60
+          connection-type: ssh
+          connection-port: 22
+          host-key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHSwguy6l2iJPPkfpzy6YRSyxUZTBHIUgTpTbaFMlztA"
+          username: zuul
+          max-parallel-jobs: 1
 
 diskimages:
   - name: ubuntu-xenial
-    pause: true
+    pause: false
     elements:
       - ubuntu
       - vm

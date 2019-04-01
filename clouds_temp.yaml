@@ -1,0 +1,85 @@
+clouds:
+  citynetwork:
+    auth:
+      auth_url: https://lon1.citycloud.com:5000/v3/
+      password: Mc3ikupo
+      project_domain_name: CCP_Domain_32924
+      project_name: Default Project 32924
+      user_domain_name: CCP_Domain_32924
+      username: openlab
+    identity_api_version: '3'
+    network_api_version: '2.0'
+    region_name: Lon1
+    volume_api_version: '2'
+  otc:
+    auth:
+      auth_url: https://iam.eu-de.otc.t-systems.com/v3
+      password: Terraform@1234
+      project_domain_name: OTC00000000001000010507
+      project_name: eu-de_otc_iam
+      user_domain_name: OTC00000000001000010507
+      username: lizhonghua
+    identity_api_version: '3'
+    network_api_version: '2.0'
+    region_name: eu-de
+    volume_api_version: '2'
+    private: true
+  switch:
+    auth:
+      auth_url: https://keystone.cloud.switch.ch:5000/v3
+      password: ni6CrU9ta6ki%
+      project_domain_name: default
+      project_name: openlab
+      user_domain_name: Default
+      username: info@openlabtesting.org
+    identity_api_version: '3'
+    network_api_version: '2.0'
+    region_name: LS
+    volume_api_version: '2'
+  vexxhost:
+    auth:
+      auth_url: https://auth.vexxhost.net/
+      password: vBujly1MydQHOALxbmxdmFZDK8eMssGQb3KFvOZIhMYv3hI5
+      project_domain_id: default
+      project_name: 705bca15-7bc2-46cf-b119-4bd1fce56c17
+      user_domain_id: default
+      username: b5c39289-a625-468f-b5f9-7d20e09def57
+    identity_api_version: '3'
+    network_api_version: '2.0'
+    region_name: ca-ymq-1
+    volume_api_version: '2'
+  chameleon:
+    auth:
+      auth_url: https://openstack.tacc.chameleoncloud.org:5000/v2.0
+      password: Mc3ikupo
+      project_name: CH-819710
+      username: openlab
+    identity_api_version: '2'
+    network_api_version: '2.0'
+    region_name: RegionOne
+    volume_api_version: '2'
+  huaweicloud:
+    auth:
+      auth_url: https://iam.ap-southeast-1.myhuaweicloud.com/v3
+      password: Terraform@12345
+      project_domain_name: wangkunpeng
+      project_name: ap-southeast-1
+      user_domain_name: wangkunpeng
+      username: wangkunpeng
+    identity_api_version: '3'
+    network_api_version: '2.0'
+    region_name: ap-southeast-1
+    volume_api_version: '2'
+  packet:
+    auth:
+      auth_url: https://packet.platform9.net/keystone/v3
+      password: vBujly1MydQHOALxbm
+      project_domain_name: default
+      project_name: openlabzuul
+      user_domain_name: Default
+      username: openlabzuul
+    identity_api_version: '3'
+    network_api_version: '2.0'
+    region_name: us-west-1
+    volume_api_version: '2' 
+    ###th testing
